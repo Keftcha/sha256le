@@ -2,7 +2,16 @@
 
 let guess = ""
 let nbTry = 0
-const secretSha256 = "1a79c411025b1250d340e5f4a1680eb811ceea1d7818e231e4bdcbd686527ecb"
+let secretSha256 = ""
+
+// Function from https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+async function digestMessage(message) {
+    const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
+    const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+    return hashHex;
+}
 
 const isValidInput = (input) => {
     return input.length == 64
@@ -60,7 +69,7 @@ const addInputField = (parentNode) => {
     inputField.placeholder = "sha256"
     inputField.addEventListener("input", (_) => {
         const inputField = document.getElementById("input")
-        guess = inputField.value
+        guess = inputField.value.toLowerCase()
     })
     // Check guess sha256 when pressing Enter
     inputField.addEventListener("keyup", (e) => {
@@ -168,15 +177,14 @@ const addTriesNode = (parentNode) => {
     return tries
 }
 
-const main = (
-    () => {
-        const app = document.getElementById("app")
+const main = async () => {
+    secretSha256 = await digestMessage(Math.random().toString())
+    const app = document.getElementById("app")
 
-        const inputField = addInputField(app)
-        addCheckButton(app, onValidInput, onInvalidInput)
-        addErrMsg(app)
-        addTriesNode(app)
-    }
-)
+    const inputField = addInputField(app)
+    addCheckButton(app, onValidInput, onInvalidInput)
+    addErrMsg(app)
+    addTriesNode(app)
+}
 
 window.addEventListener("load", main)
