@@ -56,9 +56,18 @@ const addInputField = (parentNode) => {
     inputField.autofocus = "autofocus"
     inputField.size = 64
     inputField.style.fontFamily = "monospace"
-    inputField.addEventListener("input", (e) => {
+    inputField.addEventListener("input", (_) => {
         const inputField = document.getElementById("input")
         guess = inputField.value
+    })
+    // Check guess sha256 when pressing Enter
+    inputField.addEventListener("keyup", (e) => {
+        if (e.keyCode != 13) {
+            return
+        }
+
+        const checkButton = document.getElementById("checkButton")
+        checkButton.click()
     })
 
     parentNode.appendChild(inputField)
