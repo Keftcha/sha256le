@@ -1,6 +1,7 @@
 "use strict"
 
 let guess = ""
+const secretSha256 = "1a79c411025b1250d340e5f4a1680eb811ceea1d7818e231e4bdcbd686527ecb"
 
 const isValidInput = (input) => {
     return input.length == 64
@@ -23,7 +24,29 @@ const validInput = () => {
 }
 
 const addTry = (guess) => {
-    console.log(guess)
+    const line = document.createElement("div")
+    for (let i = 0; i < secretSha256.length; i++) {
+        const guessCaracter = guess[i]
+        const secretCaracter = secretSha256[i]
+
+        const caracterBox = document.createElement("span")
+        caracterBox.innerHTML = guessCaracter
+        caracterBox.style.fontFamily = "monospace"
+        caracterBox.style.backgroundColor = "gray"
+        caracterBox.style.margin = "0.1em"
+
+        if (guessCaracter === secretCaracter) {
+            caracterBox.style.backgroundColor = "green"
+        } else if (secretSha256.includes(guessCaracter)) {
+            caracterBox.style.backgroundColor = "yellow"
+        }
+
+        line.appendChild(caracterBox)
+    }
+    const trysNode = document.getElementById("trysNode")
+    trysNode.appendChild(line)
+
+    // TODO: end game if the sha256 is guessed
 }
 
 const addInputField = (parentNode) => {
@@ -45,23 +68,31 @@ const addInputField = (parentNode) => {
     return inputField
 }
 
-const addCheckButton = (parentNode) => {
+const addCheckButton = (parentNode, onValidInput, onInvalidInput) => {
     // Button to check the input
     const checkButton = document.createElement("button")
     checkButton.id = "checkButton"
     checkButton.innerHTML = "Check"
     checkButton.addEventListener("click", () => {
         if (isValidInput(guess)) {
-            validInput()
-            addTry(guess)
+            onValidInput(guess)
         } else {
-            unvalidInput()
+            onInvalidInput(guess)
         }
     })
 
     parentNode.appendChild(checkButton)
 
     return addCheckButton
+}
+
+const onValidInput = (guess) => {
+    validInput()
+    addTry(guess)
+}
+
+const onInvalidInput = (_) => {
+    unvalidInput()
 }
 
 const addErrMsg = (parentNode) => {
@@ -73,9 +104,17 @@ const addErrMsg = (parentNode) => {
     errMsg.style.textAlign = "left"
     errMsg.innerText = ""
 
-    app.appendChild(errMsg)
+    parentNode.appendChild(errMsg)
 
     return errMsg
+}
+
+const addTrysNode = (parentNode) => {
+    // Trys
+    const trys = document.createElement("div")
+    trys.id = "trysNode"
+    parentNode.appendChild(trys)
+    return trys
 }
 
 const main = (
@@ -83,8 +122,9 @@ const main = (
         const app = document.getElementById("app")
 
         const inputField = addInputField(app)
-        addCheckButton(app)
+        addCheckButton(app, onValidInput, onInvalidInput)
         addErrMsg(app)
+        addTrysNode(app)
     }
 )
 
