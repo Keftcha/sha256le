@@ -45,8 +45,6 @@ const addTry = (guess) => {
     }
     const trysNode = document.getElementById("trysNode")
     trysNode.appendChild(line)
-
-    // TODO: end game if the sha256 is guessed
 }
 
 const addInputField = (parentNode) => {
@@ -86,9 +84,43 @@ const addCheckButton = (parentNode, onValidInput, onInvalidInput) => {
     return addCheckButton
 }
 
+const isGameOver = (guess) => {
+    if (guess != secretSha256) {
+        return
+    }
+
+    const app = document.getElementById("app")
+
+    app.insertBefore(document.createElement("br"), app.firstChild)
+    app.insertBefore(document.createElement("br"), app.firstChild)
+
+    // Add reset button
+    const reset = document.createElement("button")
+    reset.innerHTML = "Reset"
+    reset.addEventListener("click", () => {
+        window.location.reload()
+    })
+    app.insertBefore(reset, app.firstChild)
+
+    app.insertBefore(document.createElement("br"), app.firstChild)
+
+    // Add congratulation text
+    const congrats = document.createElement("div")
+    congrats.innerHTML = "🥳 You guess the sha256 ! Congratulation ! 🎉"
+    congrats.style.fontSize = "2em"
+    app.insertBefore(congrats, app.firstChild)
+
+    // Disable the check button and input field
+    const checkButton = document.getElementById("checkButton")
+    checkButton.disabled = true
+    const inputField = document.getElementById("input")
+    inputField.disabled = true
+}
+
 const onValidInput = (guess) => {
     validInput()
     addTry(guess)
+    isGameOver(guess)
 }
 
 const onInvalidInput = (_) => {
@@ -100,7 +132,7 @@ const addErrMsg = (parentNode) => {
     const errMsg = document.createElement("div")
     errMsg.id = "err"
     errMsg.style.color = "red"
-    errMsg.style.fontSize = "0.5em"
+    errMsg.style.fontSize = "0.75em"
     errMsg.style.textAlign = "left"
     errMsg.innerText = ""
 
