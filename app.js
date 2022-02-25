@@ -1,6 +1,7 @@
 "use strict"
 
 let guess = ""
+let nbTry = 0
 const secretSha256 = "1a79c411025b1250d340e5f4a1680eb811ceea1d7818e231e4bdcbd686527ecb"
 
 const isValidInput = (input) => {
@@ -43,8 +44,8 @@ const addTry = (guess) => {
 
         line.appendChild(caracterBox)
     }
-    const trysNode = document.getElementById("trysNode")
-    trysNode.appendChild(line)
+    const triesNode = document.getElementById("triesNode")
+    triesNode.appendChild(line)
 }
 
 const addInputField = (parentNode) => {
@@ -113,6 +114,13 @@ const isGameOver = (guess) => {
 
     app.insertBefore(document.createElement("br"), app.firstChild)
 
+    // Add score
+    const score = document.createElement("div")
+    score.innerHTML = `You guessed the sha256 in ${nbTry} tries.`
+    app.insertBefore(score, app.firstChild)
+
+    app.insertBefore(document.createElement("br"), app.firstChild)
+
     // Add congratulation text
     const congrats = document.createElement("div")
     congrats.innerHTML = "🥳 You guess the sha256 ! Congratulation ! 🎉"
@@ -127,6 +135,7 @@ const isGameOver = (guess) => {
 }
 
 const onValidInput = (guess) => {
+    nbTry++
     validInput()
     addTry(guess)
     isGameOver(guess)
@@ -150,12 +159,12 @@ const addErrMsg = (parentNode) => {
     return errMsg
 }
 
-const addTrysNode = (parentNode) => {
-    // Trys
-    const trys = document.createElement("div")
-    trys.id = "trysNode"
-    parentNode.appendChild(trys)
-    return trys
+const addTriesNode = (parentNode) => {
+    // Tries
+    const tries = document.createElement("div")
+    tries.id = "triesNode"
+    parentNode.appendChild(tries)
+    return tries
 }
 
 const main = (
@@ -165,8 +174,8 @@ const main = (
         const inputField = addInputField(app)
         addCheckButton(app, onValidInput, onInvalidInput)
         addErrMsg(app)
-        addTrysNode(app)
+        addTriesNode(app)
     }
 )
 
-main()
+window.addEventListener("load", main)
