@@ -57,6 +57,7 @@ const addInputField = (parentNode) => {
     inputField.autofocus = "autofocus"
     inputField.size = 64
     inputField.style.fontFamily = "monospace"
+    inputField.placeholder = "sha256"
     inputField.addEventListener("input", (_) => {
         const inputField = document.getElementById("input")
         guess = inputField.value
