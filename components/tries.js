@@ -40,7 +40,8 @@ const compare = (guess, secret) => {
             countOccurence(guess.substr(0, i), guessCharacter) <
             (
                 countOccurence(secret, guessCharacter) -
-                countOccurenceGoodPlace(
+                countOccurenceGoodPlaceAfter(
+                    i + 1,
                     guess,
                     secret,
                     guessCharacter,
