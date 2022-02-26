@@ -1,24 +1,17 @@
 "use strict"
 
 const addTry = (guess) => {
+    const colors = compare(guess, secretSha256)
+
     const line = document.createElement("div")
     for (let i = 0; i < secretSha256.length; i++) {
-        const guessCaracter = guess[i]
-        const secretCaracter = secretSha256[i]
+        const characterBox = document.createElement("span")
+        characterBox.innerHTML = guess[i]
+        characterBox.style.fontFamily = "monospace"
+        characterBox.style.backgroundColor = colors[i]
+        characterBox.style.margin = "0.1em"
 
-        const caracterBox = document.createElement("span")
-        caracterBox.innerHTML = guessCaracter
-        caracterBox.style.fontFamily = "monospace"
-        caracterBox.style.backgroundColor = "gray"
-        caracterBox.style.margin = "0.1em"
-
-        if (guessCaracter === secretCaracter) {
-            caracterBox.style.backgroundColor = "green"
-        } else if (secretSha256.includes(guessCaracter)) {
-            caracterBox.style.backgroundColor = "yellow"
-        }
-
-        line.appendChild(caracterBox)
+        line.appendChild(characterBox)
     }
     const triesNode = document.getElementById("triesNode")
     triesNode.appendChild(line)
@@ -30,4 +23,36 @@ const addTriesNode = (parentNode) => {
     tries.id = "triesNode"
     parentNode.appendChild(tries)
     return tries
+}
+
+const compare = (guess, secret) => {
+    let colors = [] // Return background color or characters (gray → not present, yellow → wrong place, green → good place)
+
+    for (let i = 0; i < secret.length; i++){
+        const guessCharacter = guess[i]
+        const secretCharacter = secret[i]
+
+        // The character is at the good place
+        if (guessCharacter === secretCharacter) {
+            colors.push("green")
+            continue
+        } else if (
+            countOccurence(guess.substr(0, i), guessCharacter) <
+            (
+                countOccurence(secret, guessCharacter) -
+                countOccurenceGoodPlace(
+                    guess,
+                    secret,
+                    guessCharacter,
+                )
+            )
+        ) {
+            colors.push("yellow")
+        } else {
+            colors.push("gray")
+        }
+
+    }
+
+    return colors
 }
