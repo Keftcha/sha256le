@@ -34,7 +34,7 @@ const compare = (guess, secret) => {
 
         // The character is at the good place
         if (guessCharacter === secretCharacter) {
-            colors.push("green")
+            colors.push("lightgreen")
             continue
         } else if (
             countOccurence(guess.substr(0, i), guessCharacter) <
@@ -50,7 +50,7 @@ const compare = (guess, secret) => {
         ) {
             colors.push("yellow")
         } else {
-            colors.push("gray")
+            colors.push("lightgray")
         }
 
     }
